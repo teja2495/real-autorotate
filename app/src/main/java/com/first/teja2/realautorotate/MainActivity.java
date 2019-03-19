@@ -1,4 +1,9 @@
-package com.example.teja2.realautorotate;
+package com.first.teja2.realautorotate;
+
+/*
+Created By
+Bala Guna Teja Karlapudi
+ */
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -8,10 +13,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +29,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,6 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.rvalerio.fgchecker.Utils.hasUsageStatsPermission;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,11 +50,19 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> selectedAppsList = new ArrayList<>();
     ImageView imageView;
     TextView tv;
+    Switch aSwitch;
     customAdapter customAdapter;
     ListView lv;
     ProgressBar pb;
     Typeface roboto;
+    TinyDB tinyDB;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        checkUsagePermission();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,59 +78,49 @@ public class MainActivity extends AppCompatActivity {
         lv = findViewById(R.id.listView);
         imageView=findViewById(R.id.imageView);
         imageView.setVisibility(View.INVISIBLE);
+        aSwitch=findViewById(R.id.switch1);
+        aSwitch.setText("Disabled");
+
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    if(!Settings.System.canWrite(MainActivity.this)) {
+                        setWritePermissions();
+                        aSwitch.setChecked(false);
+                    }
+                    else if(selectedAppsList.isEmpty()){
+                        Snackbar.make(findViewById(R.id.cLayout), "Select the Apps before Enabling the Service", Snackbar.LENGTH_LONG).show();
+                        aSwitch.setChecked(false);
+                    }
+                    else
+                    {
+                        tinyDB.putInt("status",1);
+                        startService(new Intent(MainActivity.this, realAutorotateService.class));
+                        Log.d("demo", "Service Started");
+                        aSwitch.setText("Enabled");
+                    }
+                }
+                else{
+                    tinyDB.putInt("status",0);
+                    stopService(new Intent(MainActivity.this, realAutorotateService.class));
+                    Log.d("demo", "Service Stopped");
+                    aSwitch.setText("Disabled");
+                }
+            }
+        });
+
+
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.parseColor("#01579B"));
+        tinyDB = new TinyDB(MainActivity.this);
 
+        if(tinyDB.getListString("selectedAppsList") != null)
+            Log.d("demo", tinyDB.toString());
 
-        if (!hasUsageStatsPermission(this)) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            dialogBuilder.setTitle("Permission Request");
-            dialogBuilder.setMessage("This app requires USAGE ACCESS permission to work. Would you like to grant the permission?");
-
-            dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user clicked OK
-                    startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
-                }
-            });
-            dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user clicked Cancel
-                    finishAndRemoveTask();
-                }
-            });
-            AlertDialog dialog = dialogBuilder.create();
-            dialog.show();
-    }
-
-        if (!Settings.System.canWrite(MainActivity.this)) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            dialogBuilder.setTitle("Permission Request");
-            dialogBuilder.setMessage("This app requires WRITE SETTINGS permission to toggle AutoRotation. Would you like to grant the permission?");
-
-            dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user clicked OK
-                    startActivity(new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS));
-                }
-            });
-            dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // user clicked Cancel
-                    finishAndRemoveTask();
-                }
-            });
-            AlertDialog dialog = dialogBuilder.create();
-            dialog.show();
-        }
-
-        TinyDB tinyDB = new TinyDB(MainActivity.this);
         if (tinyDB!=null){
             selectedAppsList=tinyDB.getListString("selectedAppsList");
             selectedPackageNamesList=tinyDB.getListString("selectedPackageNamesList");
@@ -125,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setVisibility(View.VISIBLE);
             customAdapter = new customAdapter(selectedAppsList);
             lv.setAdapter(customAdapter);
+            if(tinyDB.getInt("status") == 1)
+                aSwitch.setChecked(true);
         }
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -143,6 +150,66 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    void checkUsagePermission(){
+        if (!hasUsageStatsPermission(this)) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            dialogBuilder.setTitle("Permission Request");
+            dialogBuilder.setCancelable(false);
+            dialogBuilder.setMessage("This app requires USAGE ACCESS permission to work. Would you like to grant the permission?");
+
+            dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // user clicked OK
+                    startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+                }
+            });
+            dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // user clicked Cancel
+                    finishAndRemoveTask();
+                }
+            });
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
+        }
+    }
+
+    void setWritePermissions(){
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            dialogBuilder.setTitle("Permission Request");
+            dialogBuilder.setCancelable(false);
+            dialogBuilder.setMessage("This app requires WRITE SETTINGS permission to toggle AutoRotation. Would you like to grant the permission?");
+
+            dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // user clicked OK
+                    startActivity(new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS));
+                }
+            });
+            dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // user clicked Cancel
+                    finishAndRemoveTask();
+                }
+            });
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
+    }
+
+/*    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }*/
+
     class appListAsync extends AsyncTask<Integer, Integer, ArrayList<appsInfo>> {
         @Override
         protected ArrayList<appsInfo> doInBackground(Integer... integers) {
@@ -151,11 +218,18 @@ public class MainActivity extends AppCompatActivity {
             List<ApplicationInfo> infos = packageManager.getInstalledApplications(integers[0]);
 
             for (ApplicationInfo info : infos) {
-
-                if(packageManager.getLaunchIntentForPackage(info.packageName) == null)
+                if((packageManager.getLaunchIntentForPackage(info.packageName) == null)){
                     continue;
-                appsInfo appsInfo=new appsInfo((String) info.loadLabel(packageManager), info.packageName );
-                appsInfosList.add(appsInfo);
+                }
+                else{
+                    String name = (String) info.loadLabel(packageManager);
+                    if(name!=null)
+                        if(name.startsWith("com.")){
+                            continue;
+                        }
+                    appsInfo appsInfo=new appsInfo((String) info.loadLabel(packageManager), info.packageName );
+                    appsInfosList.add(appsInfo);
+                }
             }
             return appsInfosList;
         }
@@ -171,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            dialogBuilder.setCancelable(false);
             dialogBuilder.setTitle("Select the apps");
             final boolean[] checkedItems = new boolean[appsInfosList.size()];
 
@@ -200,17 +275,18 @@ public class MainActivity extends AppCompatActivity {
                         if (checked) {
                             selectedPackageNamesList.add(packageNamesList.get(i));
                             selectedAppsList.add(appNamesList.get(i));
-                            /*Log.d("demo", "app names :"+selectedAppsList.toString());
-                            Log.d("demo", "app package names :"+selectedPackageNamesList.toString());
-                            break;*/
                         }
+                    }
                         if(!selectedAppsList.isEmpty()){
                             tv.setVisibility(View.VISIBLE);
                             imageView.setVisibility(View.INVISIBLE);
                         }
-                        else
+                        else{
                             imageView.setVisibility(View.VISIBLE);
-                    }
+                            Snackbar.make(findViewById(R.id.cLayout), "No Apps Selected", Snackbar.LENGTH_LONG).show();
+                            aSwitch.setChecked(false);
+
+                        }
                     if (selectedAppsList != null) {
                         customAdapter = new customAdapter(selectedAppsList);
                         lv.setAdapter(customAdapter);
@@ -225,7 +301,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-            dialogBuilder.setNegativeButton("Cancel", null);
+            dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    if(selectedAppsList.isEmpty()){
+                        tv.setVisibility(View.INVISIBLE);
+                        imageView.setVisibility(View.VISIBLE);
+                        Snackbar.make(findViewById(R.id.cLayout), "No Apps Selected", Snackbar.LENGTH_LONG).show();
+                        aSwitch.setChecked(false);
+                    }
+                    dialog.dismiss();
+                }
+            });
             AlertDialog dialog = dialogBuilder.create();
             pb.setVisibility(View.INVISIBLE);
             dialog.show();
@@ -283,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
                         if(selectedAppsList.isEmpty()){
                             tv.setVisibility(View.INVISIBLE);
                             imageView.setVisibility(View.VISIBLE);
+                            aSwitch.setChecked(false);
                         }
                     }
                 }

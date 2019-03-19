@@ -1,7 +1,8 @@
-package com.example.teja2.realautorotate;
+package com.first.teja2.realautorotate;
 
 import android.app.Application;
 import android.content.Intent;
+
 
 public class App extends Application {
 
@@ -11,4 +12,3 @@ public class App extends Application {
         startService(new Intent(this, realAutorotateService.class));
     }
 }
-

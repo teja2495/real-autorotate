@@ -1,4 +1,4 @@
-package com.example.teja2.realautorotate;
+package com.first.teja2.realautorotate;
 
 import org.junit.Test;
 

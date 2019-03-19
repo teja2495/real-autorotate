@@ -1,10 +1,11 @@
-package com.example.teja2.realautorotate;
+package com.first.teja2.realautorotate;
 
-/* XX - Group 32
-Created by
-1. Bala Guna Teja Karlapudi
-2. Mandar Phapale
-*/public class appsInfo {
+/*
+Created By
+Bala Guna Teja Karlapudi
+ */
+
+public class appsInfo {
     String appName, appPackageName;
 
     public appsInfo(String appName, String appPackageName) {

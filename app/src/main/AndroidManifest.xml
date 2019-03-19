@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.teja2.realautorotate">
+    package="com.first.teja2.realautorotate">
 
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -10,7 +10,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".App"
+        android:name="com.first.teja2.realautorotate.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,8 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.first.teja2.realautorotate.MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,8 +30,9 @@
         </activity>
 
         <service
-            android:name=".realAutorotateService"
+            android:name="com.first.teja2.realautorotate.realAutorotateService"
             android:enabled="true"
+            android:stopWithTask="true"
             android:exported="true"></service>
     </application>
 
