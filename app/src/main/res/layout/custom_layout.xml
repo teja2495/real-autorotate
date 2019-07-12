@@ -5,7 +5,7 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
+    android:layout_margin="5dp"
     android:elevation="4dp"
     app:cardCornerRadius="8dp">
 
@@ -15,16 +15,17 @@
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="230dp"
-            android:layout_height="49dp"
+            android:layout_width="242dp"
+            android:layout_height="50dp"
             android:layout_marginStart="72dp"
             android:layout_marginTop="4dp"
+            android:fontFamily="monospace"
             android:paddingStart="8dp"
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="4dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />

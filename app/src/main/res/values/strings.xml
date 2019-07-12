@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Real Autorotate Beta</string>
+    <string name="app_name">Real AutoRotate</string>
     <string name="action_settings">Settings</string>
-    <string name="sApps">Selected Apps:</string>
+    <string name="sApps">Selected Apps</string>
     <string name="selectedApps">SelectedApps</string>
 
 </resources>

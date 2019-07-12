@@ -7,37 +7,33 @@
     android:id="@+id/cLayout"
     tools:context=".UI.MainActivity">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#E1F5FE"
         tools:context=".UI.MainActivity">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#0277BD"
-            android:text="Real AutoRotate Beta"
-            android:textAlignment="center"
+            android:background="#4264fb"
+            android:text="Real AutoRotate"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
                 android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Real AutoRotate Beta"
+                android:text="Real AutoRotate"
                 android:textColor="@android:color/white"
+                android:fontFamily="monospace"
                 android:textSize="20dp" />
 
         </android.support.v7.widget.Toolbar>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="356dp"
+            android:layout_width="395dp"
             android:layout_height="364dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -47,15 +43,15 @@
             android:dividerHeight="4px"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.333"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:layout_constraintVertical_bias="0.033" />
+            app:layout_constraintVertical_bias="0.078" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="327dp"
-            android:layout_height="323dp"
+            android:layout_width="299dp"
+            android:layout_height="218dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -63,10 +59,10 @@
             android:src="@drawable/noapps"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.195"
+            app:layout_constraintHorizontal_bias="0.375"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.872" />
+            app:layout_constraintVertical_bias="0.877" />
 
         <ProgressBar
             android:id="@+id/loadingBar"
@@ -90,35 +86,37 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="5dp"
+            android:fontFamily="@font/bad_script"
             android:text="@string/sApps"
-            android:textColor="@android:color/black"
-            android:textSize="22sp"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.036"
+            app:layout_constraintHorizontal_bias="0.485"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.179" />
+            app:layout_constraintVertical_bias="0.196" />
 
         <Switch
-            android:layout_width="121dp"
-            android:layout_height="30dp"
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="29dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text=" Switch "
-            android:id="@+id/switch1"
             android:textAllCaps="false"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="italic"
+            android:fontFamily="monospace"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.968"
+            app:layout_constraintHorizontal_bias="0.974"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.122" />
+            app:layout_constraintVertical_bias="0.107" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -128,9 +126,10 @@
         android:layout_height="60dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="@android:color/white"
-        app:backgroundTint="#039BE5"
-        app:borderWidth="2dp"
+        android:backgroundTint="#FFFFFF"
+        app:backgroundTint="#4264fb"
+        app:borderWidth="0dp"
+        app:elevation="20dp"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
 </android.support.design.widget.CoordinatorLayout>

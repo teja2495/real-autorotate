@@ -2,6 +2,8 @@ package com.first.teja2.realautorotate.UI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,19 +47,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.name.setText(itemList.get(position).getAppName());
+        String[] arr = itemList.get(position).getAppName().split("\\s+");
 
-//        Drawable icon=null;
-//
-//        try {
-//            icon = context.getPackageManager().getApplicationIcon(itemList.get(position).getAppPackageName());
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        if(arr.length>2)
+            holder.name.setText(arr[0]+" "+arr[1]);
+        else
+            holder.name.setText(itemList.get(position).getAppName());
 
-        //holder.appIcon.setImageDrawable(icon);
-
-        //Glide.with(context).load(icon).into(holder.appIcon);
+        try
+        {
+            Drawable icon = context.getPackageManager().getApplicationIcon(itemList.get(position).getAppPackageName());
+            holder.appIcon.setBackground(icon);
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+            e.printStackTrace();
+        }
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +73,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 context.startService(new Intent(context, realAutorotateService.class));
             }
         });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(itemList.get(position).getAppPackageName());
+                if (launchIntent != null) {
+                    context.startActivity(launchIntent);
+                }
+            }
+        });
+
     }
 
     @Override

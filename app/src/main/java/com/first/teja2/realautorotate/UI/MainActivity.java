@@ -10,8 +10,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -22,8 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -52,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tv;
     Switch aSwitch;
     ProgressBar pb;
-    Typeface roboto;
     AlertDialog.Builder dialogBuilder;
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
@@ -70,9 +65,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        roboto = Typeface.createFromAsset(MainActivity.this.getAssets(), "font/Roboto-Regular.ttf"); //use this.getAssets if you are calling from an Activity
         title = findViewById(R.id.toolbar_title);
-        title.setTypeface(roboto);
         tv = findViewById(R.id.textView);
         tv.setVisibility(View.INVISIBLE);
         pb = findViewById(R.id.loadingBar);
@@ -147,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
                         startService(new Intent(MainActivity.this, realAutorotateService.class));
                         //Log.d("demo", "Service Started");
-                        aSwitch.setText("Enabled");
+                        aSwitch.setText("Enabled ");
                     }
                 } else {
 
@@ -158,15 +151,10 @@ public class MainActivity extends AppCompatActivity {
 
                     stopService(new Intent(MainActivity.this, realAutorotateService.class));
                     //Log.d("demo", "Service Stopped");
-                    aSwitch.setText("Disabled");
+                    aSwitch.setText("Disabled ");
                 }
             }
         });
-
-
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(Color.parseColor("#01579B"));
 
         int status = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext())
