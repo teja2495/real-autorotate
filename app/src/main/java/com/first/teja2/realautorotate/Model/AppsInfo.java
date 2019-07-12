@@ -1,14 +1,15 @@
-package com.first.teja2.realautorotate;
+package com.first.teja2.realautorotate.Model;
 
 /*
 Created By
 Bala Guna Teja Karlapudi
  */
 
-public class appsInfo {
+
+public class AppsInfo {
     String appName, appPackageName;
 
-    public appsInfo(String appName, String appPackageName) {
+    public AppsInfo(String appName, String appPackageName) {
         this.appName = appName;
         this.appPackageName = appPackageName;
     }
@@ -20,4 +21,5 @@ public class appsInfo {
     public String getAppPackageName() {
         return appPackageName;
     }
+
 }
