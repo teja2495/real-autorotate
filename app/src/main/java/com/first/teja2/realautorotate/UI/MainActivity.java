@@ -68,21 +68,17 @@ public class MainActivity extends AppCompatActivity {
 
         Boolean flag = false;
 
-        for(int i=0; i<selectedAppsList.size(); i++){
+        for (int i = 0; i < selectedAppsList.size(); i++) {
 
-            if(!isPackageInstalled(selectedAppsList.get(i).getAppPackageName(), getPackageManager())){
+            if (!isPackageInstalled(selectedAppsList.get(i).getAppPackageName(), getPackageManager())) {
                 mMainViewModel.setSelectedApps(this, selectedAppsList, selectedAppsList.get(i));
                 flag = true;
             }
         }
 
-        if(flag){
+        if (flag) {
 
-            int status = PreferenceManager
-                    .getDefaultSharedPreferences(getApplicationContext())
-                    .getInt("status", -1);
-
-            if(status == 1){
+            if (getStatus() == 1) {
                 stopService(new Intent(this, realAutorotateService.class));
                 startService(new Intent(this, realAutorotateService.class));
             }
@@ -97,10 +93,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         title = findViewById(R.id.toolbar_title);
+
         tv = findViewById(R.id.textView);
         tv.setVisibility(View.INVISIBLE);
+
         pb = findViewById(R.id.loadingBar);
         pb.setVisibility(View.INVISIBLE);
+
         imageView = findViewById(R.id.imageView);
         imageView.setVisibility(View.INVISIBLE);
 
@@ -123,13 +122,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (selectedAppsList.size() > 0) {
 
-                    int status = PreferenceManager
-                            .getDefaultSharedPreferences(getApplicationContext())
-                            .getInt("status", -1);
-
                     labeledSwitch.setEnabled(true);
 
-                    if(status == 1)
+                    if (getStatus() == 1)
                         labeledSwitch.setOn(true);
                     else
                         labeledSwitch.setOn(false);
@@ -159,20 +154,14 @@ public class MainActivity extends AppCompatActivity {
             public void onSwitched(ToggleableView toggleableView, boolean isOn) {
                 if (isOn) {
 
-                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                .edit()
-                                .putInt("status", 1)
-                                .apply();
+                    setStatus(1);
 
-                        startService(new Intent(MainActivity.this, realAutorotateService.class));
-                        labeledSwitch.setOn(true);
-                        //Log.d("demo", "Service Started");
+                    startService(new Intent(MainActivity.this, realAutorotateService.class));
+                    labeledSwitch.setOn(true);
+                    //Log.d("demo", "Service Started");
                 } else {
 
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                            .edit()
-                            .putInt("status", 0)
-                            .apply();
+                    setStatus(0);
 
                     stopService(new Intent(MainActivity.this, realAutorotateService.class));
                     //Log.d("demo", "Service Stopped");
@@ -180,9 +169,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        int status = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext())
-                .getInt("status", -1);
+        int status = getStatus();
 
         if (selectedAppsList.size() > 0) {
 
@@ -195,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setImageResource(R.drawable.addapp);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -315,11 +303,7 @@ public class MainActivity extends AppCompatActivity {
 
                     labeledSwitch.setOn(true);
 
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                            .edit()
-                            .putInt("status", 1)
-                            .apply();
-
+                    setStatus(1);
 
                     initRecyclerView();
 
@@ -406,6 +390,21 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    int getStatus() {
+
+        return PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext())
+                .getInt("status", -1);
+
+    }
+
+    void setStatus(int num) {
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .edit()
+                .putInt("status", num)
+                .apply();
     }
 
 }
