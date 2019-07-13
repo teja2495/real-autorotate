@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,16 +24,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.first.teja2.realautorotate.Model.AppsInfo;
 import com.first.teja2.realautorotate.R;
 import com.first.teja2.realautorotate.Service.realAutorotateService;
 import com.first.teja2.realautorotate.ViewModel.MainViewModel;
+import com.github.angads25.toggle.interfaces.OnToggledListener;
+import com.github.angads25.toggle.model.ToggleableView;
+import com.github.angads25.toggle.widget.LabeledSwitch;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,11 +54,11 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel mMainViewModel;
     ImageView imageView;
     TextView tv;
-    Switch aSwitch;
     ProgressBar pb;
     AlertDialog.Builder dialogBuilder;
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
+    LabeledSwitch labeledSwitch;
 
     @Override
     protected void onResume() {
@@ -64,7 +66,30 @@ public class MainActivity extends AppCompatActivity {
 
         checkUsagePermission();
 
+        Boolean flag = false;
+
+        for(int i=0; i<selectedAppsList.size(); i++){
+
+            if(!isPackageInstalled(selectedAppsList.get(i).getAppPackageName(), getPackageManager())){
+                mMainViewModel.setSelectedApps(this, selectedAppsList, selectedAppsList.get(i));
+                flag = true;
+            }
+        }
+
+        if(flag){
+
+            int status = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext())
+                    .getInt("status", -1);
+
+            if(status == 1){
+                stopService(new Intent(this, realAutorotateService.class));
+                startService(new Intent(this, realAutorotateService.class));
+            }
+        }
+
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +103,11 @@ public class MainActivity extends AppCompatActivity {
         pb.setVisibility(View.INVISIBLE);
         imageView = findViewById(R.id.imageView);
         imageView.setVisibility(View.INVISIBLE);
-        aSwitch = findViewById(R.id.switch1);
-        aSwitch.setText("Disabled");
+
+        labeledSwitch = findViewById(R.id.switch1);
+        labeledSwitch.setColorOn(Color.parseColor("#283c97"));
+        labeledSwitch.setColorBorder(Color.parseColor("#FFFFFF"));
+
         mRecyclerView = findViewById(R.id.recyclerView);
 
         mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -93,10 +121,20 @@ public class MainActivity extends AppCompatActivity {
 
                 selectedAppsList = appsList;
 
-
                 if (selectedAppsList.size() > 0) {
 
-                    aSwitch.setChecked(true);
+                    int status = PreferenceManager
+                            .getDefaultSharedPreferences(getApplicationContext())
+                            .getInt("status", -1);
+
+                    labeledSwitch.setEnabled(true);
+
+                    if(status == 1)
+                        labeledSwitch.setOn(true);
+                    else
+                        labeledSwitch.setOn(false);
+
+
                     initRecyclerView();
                     mRecyclerView.setVisibility(View.VISIBLE);
                     imageView.setVisibility(View.INVISIBLE);
@@ -109,23 +147,17 @@ public class MainActivity extends AppCompatActivity {
                     mRecyclerView.setVisibility(View.INVISIBLE);
                     imageView.setVisibility(View.VISIBLE);
                     tv.setVisibility(View.INVISIBLE);
-                    aSwitch.setChecked(false);
+                    labeledSwitch.setOn(false);
+                    labeledSwitch.setEnabled(false);
                 }
             }
         });
 
-        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
+        labeledSwitch.setOnToggledListener(new OnToggledListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (!Settings.System.canWrite(MainActivity.this)) {
-                        setWritePermissions();
-                        aSwitch.setChecked(false);
-                    } else if (selectedAppsList.isEmpty()) {
-                        Snackbar.make(findViewById(R.id.cLayout), "Select the Apps before Enabling the Service", Snackbar.LENGTH_LONG).show();
-                        aSwitch.setChecked(false);
-                    } else {
+            public void onSwitched(ToggleableView toggleableView, boolean isOn) {
+                if (isOn) {
 
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                                 .edit()
@@ -133,9 +165,8 @@ public class MainActivity extends AppCompatActivity {
                                 .apply();
 
                         startService(new Intent(MainActivity.this, realAutorotateService.class));
+                        labeledSwitch.setOn(true);
                         //Log.d("demo", "Service Started");
-                        aSwitch.setText("Enabled ");
-                    }
                 } else {
 
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
@@ -145,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
 
                     stopService(new Intent(MainActivity.this, realAutorotateService.class));
                     //Log.d("demo", "Service Stopped");
-                    aSwitch.setText("Disabled ");
                 }
             }
         });
@@ -159,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
             initRecyclerView();
 
             if (status == 1)
-                aSwitch.setChecked(true);
+                labeledSwitch.setOn(true);
+
         }
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -168,11 +199,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                imageView.setVisibility(View.INVISIBLE);
+                if (!Settings.System.canWrite(MainActivity.this)) {
+                    setWritePermissions();
 
-                pb.setVisibility(View.VISIBLE);
+                } else {
 
-                new AppListAsync().execute(PackageManager.GET_META_DATA);
+                    imageView.setVisibility(View.INVISIBLE);
+
+                    pb.setVisibility(View.VISIBLE);
+
+                    new AppListAsync().execute(PackageManager.GET_META_DATA);
+
+                }
 
             }
         });
@@ -243,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
 
         HashSet<String> packageHashSet = new HashSet<>();
 
-        for(AppsInfo app : selectedAppsList)
+        for (AppsInfo app : selectedAppsList)
             packageHashSet.add(app.getAppPackageName());
 
 
@@ -274,12 +312,22 @@ public class MainActivity extends AppCompatActivity {
                     tv.setVisibility(View.VISIBLE);
                     imageView.setVisibility(View.INVISIBLE);
                     mMainViewModel.setSelectedApps(getApplicationContext(), selectedAppsList, null);
+
+                    labeledSwitch.setOn(true);
+
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .edit()
+                            .putInt("status", 1)
+                            .apply();
+
+
                     initRecyclerView();
+
                 } else {
                     mRecyclerView.setVisibility(View.INVISIBLE);
                     imageView.setVisibility(View.VISIBLE);
                     Snackbar.make(findViewById(R.id.cLayout), "No Apps Selected", Snackbar.LENGTH_LONG).show();
-                    aSwitch.setChecked(false);
+                    labeledSwitch.setOn(false);
                 }
             }
         });
@@ -290,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
                     tv.setVisibility(View.INVISIBLE);
                     imageView.setVisibility(View.VISIBLE);
                     Snackbar.make(findViewById(R.id.cLayout), "No Apps Selected", Snackbar.LENGTH_LONG).show();
-                    aSwitch.setChecked(false);
+                    labeledSwitch.setOn(false);
                 }
                 dialog.dismiss();
             }
@@ -348,6 +396,15 @@ public class MainActivity extends AppCompatActivity {
             pb.setVisibility(View.INVISIBLE);
             initDialogBox();
 
+        }
+    }
+
+    private boolean isPackageInstalled(String packagename, PackageManager packageManager) {
+        try {
+            packageManager.getPackageGids(packagename);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 

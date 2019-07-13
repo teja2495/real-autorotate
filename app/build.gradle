@@ -16,6 +16,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -31,5 +36,6 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation files('libs/gson.jar')
     implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'com.github.angads25:toggle:1.1.0'
 
 }

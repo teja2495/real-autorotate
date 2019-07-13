@@ -74,7 +74,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             }
         });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.appIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(itemList.get(position).getAppPackageName());
