@@ -36,6 +36,10 @@ NOTE:
 Do NOT remove the app from "recent apps" screen. It causes the service to stop.
 In Case, you accidentally removed "Real AutoRotate", just open the app to re-enable the service.
 
+Architecture: MVVM
+
+Language: JAVA
+
 CREDITS:
 
 1. App Icon designed by Freepik from www.flaticon.com
