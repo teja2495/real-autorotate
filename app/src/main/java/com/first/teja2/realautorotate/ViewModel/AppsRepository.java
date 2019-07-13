@@ -2,17 +2,12 @@ package com.first.teja2.realautorotate.ViewModel;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
+import com.first.teja2.realautorotate.Model.AppsInfo;
 import com.first.teja2.realautorotate.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.first.teja2.realautorotate.Model.AppsInfo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -21,8 +16,6 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Places Repository which fetches/saves data based on ViewModel's request
- * -
  * Created by
  * Bala Guna Teja Karlapudi
  */
@@ -31,11 +24,8 @@ import java.util.List;
 public class AppsRepository {
 
     private static AppsRepository instance;
-    List<AppsInfo> appsInfoList = new ArrayList<>();
     List<AppsInfo> selectedApps = new ArrayList<>();
-    MutableLiveData<List<AppsInfo>> data = new MutableLiveData<>();
     MutableLiveData<List<AppsInfo>> savedData = new MutableLiveData<>();
-    Context context;
 
 
     public static AppsRepository getInstance() {
@@ -43,17 +33,6 @@ public class AppsRepository {
             instance = new AppsRepository();
         }
         return instance;
-    }
-
-    public MutableLiveData<List<AppsInfo>> getApps(Context context) {
-
-            this.context = context;
-            new appListAsync().execute(PackageManager.GET_META_DATA);
-            data.setValue(appsInfoList);
-
-        //Log.d("demo","inside Repo :"+dataSet.size());
-
-        return data;
     }
 
 
@@ -104,43 +83,6 @@ public class AppsRepository {
 
         savedData.setValue(selectedApps);
         return savedData;
-    }
-
-    public class appListAsync extends AsyncTask<Integer, Integer, List<AppsInfo>> {
-        @Override
-        protected void onPostExecute(List<AppsInfo> appsInfos) {
-            super.onPostExecute(appsInfos);
-
-            data.setValue(appsInfos);
-
-        }
-
-        @Override
-        protected List<AppsInfo> doInBackground(Integer... integers) {
-
-            PackageManager packageManager = context.getPackageManager();
-            List<ApplicationInfo> infos = packageManager.getInstalledApplications(integers[0]);
-
-            for (ApplicationInfo info : infos) {
-                if ((packageManager.getLaunchIntentForPackage(info.packageName) == null)) {
-                    continue;
-                } else {
-                    String name = (String) info.loadLabel(packageManager);
-                    if (name != null)
-                        if (name.startsWith("com.")) {
-                            continue;
-                        }
-
-                    AppsInfo appsInfo = new AppsInfo((String) info.loadLabel(packageManager), info.packageName);
-                    appsInfoList.add(appsInfo);
-                }
-            }
-
-            Collections.sort(appsInfoList, nameComparator);
-
-            return appsInfoList;
-
-        }
     }
 
     public static Comparator<AppsInfo> nameComparator = new Comparator<AppsInfo>() {

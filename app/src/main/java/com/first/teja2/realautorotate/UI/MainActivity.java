@@ -1,8 +1,8 @@
 package com.first.teja2.realautorotate.UI;
 
-/*
-Created By
-Bala Guna Teja Karlapudi
+/**
+ * Created by
+ * Bala Guna Teja Karlapudi
  */
 
 import android.app.AlertDialog;
@@ -10,6 +10,9 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -32,8 +35,11 @@ import com.first.teja2.realautorotate.Service.realAutorotateService;
 import com.first.teja2.realautorotate.ViewModel.MainViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
+import static com.first.teja2.realautorotate.ViewModel.AppsRepository.nameComparator;
 import static com.rvalerio.fgchecker.Utils.hasUsageStatsPermission;
 
 
@@ -84,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
         mMainViewModel.getSavedApps().observe(this, new Observer<List<AppsInfo>>() {
             @Override
             public void onChanged(@Nullable List<AppsInfo> appsList) {
+
                 selectedAppsList = appsList;
 
-                //Log.d("demo", "Inside Get Saved Apps: "+selectedAppsList.size()+"");
 
                 if (selectedAppsList.size() > 0) {
 
@@ -105,18 +111,6 @@ public class MainActivity extends AppCompatActivity {
                     tv.setVisibility(View.INVISIBLE);
                     aSwitch.setChecked(false);
                 }
-            }
-        });
-
-        mMainViewModel.initAllApps(getApplicationContext());
-
-        mMainViewModel.getApps().observe(this, new Observer<List<AppsInfo>>() {
-            @Override
-            public void onChanged(@Nullable List<AppsInfo> appsList) {
-
-                appsInfoList = appsList;
-
-                //Log.d("demo", "Inside Get Apps: "+appsInfoList.size()+"");
             }
         });
 
@@ -173,10 +167,13 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 imageView.setVisibility(View.INVISIBLE);
-                //pb.setVisibility(View.VISIBLE);
-                mMainViewModel.initAllApps(getApplicationContext());
-                initDialogBox();
+
+                pb.setVisibility(View.VISIBLE);
+
+                new AppListAsync().execute(PackageManager.GET_META_DATA);
+
             }
         });
 
@@ -244,8 +241,14 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setCancelable(false);
         dialogBuilder.setTitle("Select the apps");
 
+        HashSet<String> packageHashSet = new HashSet<>();
+
+        for(AppsInfo app : selectedAppsList)
+            packageHashSet.add(app.getAppPackageName());
+
+
         for (int i = 0; i < appsInfoList.size(); i++) {
-            if (selectedAppsList.contains(appsInfoList.get(i)))
+            if (packageHashSet.contains(appsInfoList.get(i).getAppPackageName()))
                 checkedItems[i] = true;
         }
 
@@ -306,8 +309,46 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
+
+    public class AppListAsync extends AsyncTask<Integer, Integer, List<AppsInfo>> {
+
+        @Override
+        protected List<AppsInfo> doInBackground(Integer... integers) {
+
+            PackageManager packageManager = getPackageManager();
+            List<ApplicationInfo> infos = packageManager.getInstalledApplications(integers[0]);
+
+            appsInfoList.clear();
+
+            for (ApplicationInfo info : infos) {
+                if ((packageManager.getLaunchIntentForPackage(info.packageName) == null)) {
+                    continue;
+                } else {
+                    String name = (String) info.loadLabel(packageManager);
+                    if (name != null)
+                        if (name.startsWith("com.")) {
+                            continue;
+                        }
+
+                    AppsInfo appsInfo = new AppsInfo((String) info.loadLabel(packageManager), info.packageName);
+                    appsInfoList.add(appsInfo);
+                }
+            }
+
+            Collections.sort(appsInfoList, nameComparator);
+
+            return appsInfoList;
+
+        }
+
+        @Override
+        protected void onPostExecute(List<AppsInfo> appsInfos) {
+            super.onPostExecute(appsInfos);
+
+            pb.setVisibility(View.INVISIBLE);
+            initDialogBox();
+
+        }
+    }
+
 }
-
-
-
-
