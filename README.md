@@ -43,6 +43,5 @@ Language: JAVA
 CREDITS:
 
 1. App Icon designed by Freepik from www.flaticon.com
-2. "Select Apps" button within the app is designed by Smashicons from www.flaticon.com
-3. https://github.com/ricvalerio/foregroundappchecker (Library to retrieve foreground app info)
-4. https://github.com/Angads25/android-toggle (Toggle Button)
+2. https://github.com/ricvalerio/foregroundappchecker (Library to retrieve foreground app info)
+3. https://github.com/Angads25/android-toggle (Toggle Button)
