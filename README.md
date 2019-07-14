@@ -7,7 +7,8 @@ based on the application being used in the foreground.
 
 HOW TO USE:
 
-Step 1: Download the App from Google Play - Link: https://play.google.com/store/apps/details?id=com.first.teja2.realautorotate
+Step 1: Download the App from Google Play
+Link: https://play.google.com/store/apps/details?id=com.first.teja2.realautorotate
 
 Step 2: When you open the App for the first time, it asks you for the necessary permissions. Grant the required permissions.
 
