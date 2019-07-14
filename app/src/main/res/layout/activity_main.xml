@@ -68,32 +68,14 @@
             android:layout_width="match_parent"
             android:layout_height="374dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:divider="#0277BD"
             android:dividerHeight="4px"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:layout_constraintVertical_bias="0.367" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="301dp"
-            android:layout_height="164dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/noapps"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.085"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.803" />
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
         <ProgressBar
             android:id="@+id/loadingBar"
@@ -115,10 +97,10 @@
             android:layout_height="58dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="80dp"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:gravity="center"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/bad_script"
+            android:gravity="center"
             android:text="@string/sApps"
             android:textColor="@color/cardview_dark_background"
             android:textSize="30sp"
@@ -129,19 +111,58 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="333dp"
+            android:layout_height="139dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-thin"
+            android:gravity="center"
+            android:text="@string/instruction"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.692" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="351dp"
+            android:layout_height="176dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="56dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintVertical_bias="0.212"
+            app:srcCompat="@drawable/welcome" />
+
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="70dp"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="#FFFFFF"
         app:backgroundTint="#4264fb"
         app:borderWidth="0dp"
         app:elevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
 </android.support.design.widget.CoordinatorLayout>

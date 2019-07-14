@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MainViewModel mMainViewModel;
     ImageView imageView;
-    TextView tv;
+    TextView tv, tv2;
     ProgressBar pb;
     AlertDialog.Builder dialogBuilder;
     private RecyclerView mRecyclerView;
@@ -97,15 +97,17 @@ public class MainActivity extends AppCompatActivity {
         tv = findViewById(R.id.textView);
         tv.setVisibility(View.INVISIBLE);
 
+        tv2 = findViewById(R.id.textView2);
+        tv2.setVisibility(View.INVISIBLE);
+
         pb = findViewById(R.id.loadingBar);
         pb.setVisibility(View.INVISIBLE);
 
         imageView = findViewById(R.id.imageView);
-        imageView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.GONE);
 
         labeledSwitch = findViewById(R.id.switch1);
         labeledSwitch.setColorOn(Color.parseColor("#283c97"));
-        labeledSwitch.setColorBorder(Color.parseColor("#FFFFFF"));
 
         mRecyclerView = findViewById(R.id.recyclerView);
 
@@ -131,19 +133,19 @@ public class MainActivity extends AppCompatActivity {
 
 
                     initRecyclerView();
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    imageView.setVisibility(View.INVISIBLE);
-                    tv.setVisibility(View.VISIBLE);
+
+                    appsSelectedVisibilitySettings();
 
                     stopService(new Intent(MainActivity.this, realAutorotateService.class));
                     startService(new Intent(MainActivity.this, realAutorotateService.class));
 
                 } else {
-                    mRecyclerView.setVisibility(View.INVISIBLE);
-                    imageView.setVisibility(View.VISIBLE);
-                    tv.setVisibility(View.INVISIBLE);
+
+                    noAppsVisibilitySettings();
+
                     labeledSwitch.setOn(false);
                     labeledSwitch.setEnabled(false);
+
                 }
             }
         });
@@ -158,13 +160,12 @@ public class MainActivity extends AppCompatActivity {
 
                     startService(new Intent(MainActivity.this, realAutorotateService.class));
                     labeledSwitch.setOn(true);
-                    //Log.d("demo", "Service Started");
+
                 } else {
 
                     setStatus(0);
 
                     stopService(new Intent(MainActivity.this, realAutorotateService.class));
-                    //Log.d("demo", "Service Stopped");
                 }
             }
         });
@@ -188,11 +189,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (!Settings.System.canWrite(MainActivity.this)) {
+
                     setWritePermissions();
 
                 } else {
 
                     imageView.setVisibility(View.INVISIBLE);
+                    tv2.setVisibility(View.INVISIBLE);
+                    tv.setVisibility(View.INVISIBLE);
+                    mRecyclerView.setVisibility(View.INVISIBLE);
 
                     pb.setVisibility(View.VISIBLE);
 
@@ -296,9 +301,16 @@ public class MainActivity extends AppCompatActivity {
                         selectedAppsList.add(appsInfoList.get(i));
                     }
                 }
-                if (!selectedAppsList.isEmpty()) {
-                    tv.setVisibility(View.VISIBLE);
-                    imageView.setVisibility(View.INVISIBLE);
+                if (selectedAppsList.isEmpty()) {
+
+                    noAppsVisibilitySettings();
+                    Snackbar.make(findViewById(R.id.cLayout), "No Apps Selected", Snackbar.LENGTH_LONG).show();
+                    labeledSwitch.setOn(false);
+
+                } else {
+
+                    appsSelectedVisibilitySettings();
+
                     mMainViewModel.setSelectedApps(getApplicationContext(), selectedAppsList, null);
 
                     labeledSwitch.setOn(true);
@@ -307,11 +319,6 @@ public class MainActivity extends AppCompatActivity {
 
                     initRecyclerView();
 
-                } else {
-                    mRecyclerView.setVisibility(View.INVISIBLE);
-                    imageView.setVisibility(View.VISIBLE);
-                    Snackbar.make(findViewById(R.id.cLayout), "No Apps Selected", Snackbar.LENGTH_LONG).show();
-                    labeledSwitch.setOn(false);
                 }
             }
         });
@@ -319,10 +326,16 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (selectedAppsList.isEmpty()) {
-                    tv.setVisibility(View.INVISIBLE);
-                    imageView.setVisibility(View.VISIBLE);
+
+                    noAppsVisibilitySettings();
+
                     Snackbar.make(findViewById(R.id.cLayout), "No Apps Selected", Snackbar.LENGTH_LONG).show();
                     labeledSwitch.setOn(false);
+
+                } else {
+
+                    appsSelectedVisibilitySettings();
+
                 }
                 dialog.dismiss();
             }
@@ -405,6 +418,24 @@ public class MainActivity extends AppCompatActivity {
                 .edit()
                 .putInt("status", num)
                 .apply();
+    }
+
+    void noAppsVisibilitySettings(){
+
+        tv.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.VISIBLE);
+        tv2.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
+
+    }
+
+    void appsSelectedVisibilitySettings(){
+
+        tv.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.INVISIBLE);
+        tv2.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+
     }
 
 }
