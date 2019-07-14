@@ -3,6 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="sApps">Selected Apps</string>
     <string name="selectedApps">SelectedApps</string>
-    <string name="instruction">Tap on the Button in the Bottom Right Corner to Select the Apps</string>
+    <string name="instruction">Tap on the "Plus" Button Below to Select the Apps</string>
 
 </resources>

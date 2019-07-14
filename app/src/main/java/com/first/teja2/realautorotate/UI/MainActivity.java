@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setImageResource(R.drawable.addapp);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
