@@ -5,11 +5,9 @@ Photo Gallery etc. and we tend to forget turning it off when closing that applic
 auto-rotates to landscape mode in other applications. "Real-AutoRotate" automates this process by turning “Auto-Rotate” setting on/off 
 based on the application being used in the foreground. 
 
-Have you ever got annoyed when your phone's screen accidentally rotates to Landscape mode? "Real AutoRotate" is here to solve this simple problem. This app allows you to choose apps in which you want the auto-rotation setting enabled.
-
 HOW TO USE:
 
-Step 1: Download the App from Google Play
+Step 1: Download the App from Google Play - Link: http://bit.ly/2LYXLwm
 
 Step 2: When you open the App for the first time, it asks you for the necessary permissions. Grant the required permissions.
 
